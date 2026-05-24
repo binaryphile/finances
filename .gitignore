@@ -1,0 +1,26 @@
+# nix-wrapper symlinks populated by update-env
+bin/
+
+# Privacy firewall: financial data file types must never be committed.
+# See README.md "Privacy rule" for the project-level rule this enforces.
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.ods
+*.ofx
+*.qfx
+*.qif
+*.pdf
+
+# Conventional locations for personal/working files that stay local-only.
+private/
+data/
+personal/
+scratch/
+
+# Editor / OS noise
+.direnv/
+.envrc.local
+.DS_Store
+*.swp

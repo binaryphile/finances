@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# pre-commit -- privacy firewall for the finances repo.
+#
+# Rejects commits whose staged content contains patterns that look like
+# real financial data. The repo is public; the hard rule is that no
+# account numbers, balances, or transaction amounts ever land in history.
+#
+# Override (for documented false positives) by exporting
+# SKIP_FINANCE_SCAN=1 for the single commit:
+#
+#   SKIP_FINANCE_SCAN=1 git commit -m "..."
+#
+# An override prints a warning to stderr; it is not silent.
+
+set -euo pipefail
+
+if [[ ${SKIP_FINANCE_SCAN:-} == 1 ]]; then
+  echo "WARNING: pre-commit finance scan bypassed (SKIP_FINANCE_SCAN=1)" >&2
+  exit 0
+fi
+
+# Patterns that match likely real financial data:
+#   - currency with comma-grouped magnitude (dollar sign + N,NNN[.NN] shape)
+#   - currency with three or more digits of magnitude (dollar sign + NNN[.NN])
+#   - run of eight or more consecutive digits (account / card numbers)
+#
+# Placeholders the convention permits explicitly (won't trigger):
+#   single-letter or single-digit amounts; word-named institutions and accounts.
+patterns=(
+  '\$[0-9]{1,3}(,[0-9]{3})+(\.[0-9]{2})?'  # comma-grouped currency
+  '\$[0-9]{3,}(\.[0-9]{2})?'                # three-or-more-digit currency
+  '\b[0-9]{8,}\b'                           # long digit run
+)
+
+# Scan staged additions only (lines beginning with + in the diff, excluding +++ file headers).
+# --cached: staged content; -U0: no context lines; -- '*': all paths.
+staged=$(git diff --cached -U0 -- '*' | grep -E '^\+' | grep -vE '^\+\+\+ ' || true)
+
+if [[ -z $staged ]]; then
+  exit 0
+fi
+
+violations=0
+for pat in "${patterns[@]}"; do
+  if matches=$(printf '%s\n' "$staged" | grep -nE "$pat" || true); [[ -n $matches ]]; then
+    echo "FAIL: staged content matches privacy pattern: $pat" >&2
+    printf '%s\n' "$matches" | head -10 | sed 's/^/  /' >&2
+    violations=$((violations + 1))
+  fi
+done
+
+if (( violations > 0 )); then
+  echo "" >&2
+  echo "$violations pattern(s) matched. Refusing to commit." >&2
+  echo "If this is a false positive, override with: SKIP_FINANCE_SCAN=1 git commit ..." >&2
+  exit 1
+fi
+
+exit 0
