@@ -72,7 +72,7 @@ in the MSS.
 | Term | Definition |
 |------|------------|
 | `Primary` | The household member driving the financial practice. Singular role. |
-| `Spouse` | Co-actor on joint decisions; may hold separate accounts. |
+| `Spouse` | Co-actor on joint decisions; may hold separate accounts. Serves as **participating actor** in UC-B (joint review sessions) — a labeled second role distinct from Cockburn's "secondary actor" category. |
 | `Child` | Household dependent. May serve as primary actor in future subfunction UCs (e.g., allowance, debit card). |
 | `Future-Primary` | Primary at a future time — retired, incapacitated, or deceased. Stakeholder, not actor. |
 | `Future-Spouse` | Surviving spouse in continuity scenarios. Stakeholder, not actor. |
