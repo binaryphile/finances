@@ -42,13 +42,12 @@ each goal. The portfolio of use cases is the source of truth for *what* the
 household needs from its financial practice; supporting docs (`design.md`,
 scripts in `bin/`) describe *how* the practice is mechanized.
 
-See `docs/use-cases.md` for the use-case portfolio and
-`HANDOFF.md` for the current state of the work.
+See `docs/use-cases.md` for the use-case portfolio and the current
+state of the work (Status section).
 
 ## Layout
 
-    docs/use-cases.md     # Cockburn use-case portfolio (the canonical WHAT)
-    HANDOFF.md            # current state of the work; entry point for a new session
+    docs/use-cases.md     # Cockburn use-case portfolio (the canonical WHAT; entry point)
     bin/                  # nix-wrapper symlinks (gitignored, populated by update-env)
     .githooks/pre-commit  # privacy firewall scanner
     flake.nix             # devShell

@@ -33,4 +33,5 @@ or long-digit patterns. The hook is activated with
 
 ## Entry point
 
-`HANDOFF.md` captures the state of the work. Read it first.
+`docs/use-cases.md` is the canonical document for project context (purpose,
+actors, stakeholders, portfolio status, dressed use cases). Read it first.
