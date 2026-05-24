@@ -337,17 +337,39 @@ unknown vendor name):*
 > is known (vendor name, draft amount range, account drawn from).
 > Continue at 3.
 
-2c. *Inventory exceeds cognitive single-list capacity:*
+2c. *Primary cannot quickly locate known relationships in the
+inventory by scan alone:*
 > Primary splits the inventory by category (e.g., banking / investments
 > / debts / insurance / utilities / subscriptions). The split is itself
 > a mechanism-layer concern; the practice's invariants are unchanged.
 > Continue at 2 with the appropriate category.
+
+2d. *Login credentials no longer work for an account on record:*
+> Primary flags the entry as access-blocked and records what is
+> known from external sources (most recent statement, account holder
+> name). Primary opens a follow-up commitment to recover credentials
+> (password reset / institution call) — recovery itself is out-of-scope
+> for this UC. Continue at 2 with the next relationship.
+
+2e. *Institution has renamed, merged, or been acquired since the
+relationship was last recorded:*
+> Primary updates the institution name in the existing inventory entry
+> and notes the rename / merger date for future reference. The
+> relationship's continuity is preserved over the institution identity.
+> Continue at 2 with the next relationship.
 
 3a. *Orphan autopay traced to a closed account:*
 > Primary contacts the originating institution to stop the autopay
 > attempt or transfer it to the current account. The follow-up is
 > recorded as a commitment for the next review.
 > Continue at 4.
+
+3b. *Statement and inventory disagree about a relationship (different
+institution name, different account-id, different autopay amount):*
+> Primary records both sources of evidence inline and flags the
+> relationship as needs-reconciliation. Reconciliation itself is
+> out-of-scope for this UC (the next review session or an out-of-band
+> investigation resolves it). Continue at 4.
 
 4a. *Beneficiary contact (e.g., `Heir`) cannot be reached for an
 update:*
@@ -503,6 +525,15 @@ fraud investigation, institution dispute):*
 > institution(s) and intended designation; the follow-up reaches
 > outside the review session. Continue at 7.
 
+*a. *Review session interrupted before step 7 completes (any step):*
+> Primary (or Primary and Spouse) record where the session stopped,
+> which decisions and anomalies remain unresolved, and the planned
+> resumption time. The interrupted session is itself logged as
+> begun-but-not-stamped (per Minimal Guarantee) so the next session
+> knows what was open. No next-review date is confirmed until the
+> resumed session reaches step 7. Resume at the step where the
+> interruption occurred.
+
 **Technology and Data Variations:**
 
 - **Cadence — Weekly close** (lighter): focuses on steps 3 and 5
@@ -575,31 +606,43 @@ fraud investigation, institution dispute):*
    served more fully by later UCs (estate planning is rank 11; vet
    care is rank 13; major-purchase planning is rank 12).
 
-6. **Sinking categories surface but are not modeled here.** UC-B
+6. **Awareness before optimization.** The foundational pair stops
+   short of budgeting / accounting formalism — no chart of accounts,
+   no envelope methodology, no double-entry semantics, no specific
+   budget categories beyond "sinking category" as a domain term.
+   This is intentional: the diagnosis is "we aren't paying
+   attention," not "we're optimizing imperfectly." Visibility
+   precedes optimization; the household can't budget what it can't
+   see. Once UC-A and UC-B mature in practice and the household
+   genuinely knows what it has, the subsequent UCs (rank C onward —
+   net worth, budget categorization, runway) can layer on without
+   rebuilding the visibility substrate.
+
+7. **Sinking categories surface but are not modeled here.** UC-B
    references sinking-category funding commitments as a normal
    review output. The sinking-category mechanism itself (which
    categories exist, how funded, how drawn) belongs to a later UC
    (likely UC-4 "Fund sinking categories") or to `design.md` once
    mechanism is chosen.
 
-7. **Splitting `use-cases.md` is deferred.** This single file is
+8. **Splitting `use-cases.md` is deferred.** This single file is
    sized for the foundational pair plus scaffolding. The split
    decision (per related-use-case grouping, per actor, per goal
    rank, etc.) is deferred until the portfolio grows past ~10
    dressed UCs.
 
-8. **`design.md` is deferred.** No mechanism has been chosen, so
+9. **`design.md` is deferred.** No mechanism has been chosen, so
    there is nothing for `design.md` to describe. The decision is
    conditional on enough UCs existing to inform the mechanism
    choice — not deferred to a specific future cycle.
 
-9. **Spouse-as-repo-editor question is open.** Whether Spouse
-   co-edits this repo or only consumes summaries is an open
-   question; it does not affect the UC shape (Spouse appears as
-   actor regardless), but it does affect whether `README.md` needs
-   a "for the non-technical reader" alternative.
+10. **Spouse-as-repo-editor question is open.** Whether Spouse
+    co-edits this repo or only consumes summaries is an open
+    question; it does not affect the UC shape (Spouse appears as
+    actor regardless), but it does affect whether `README.md` needs
+    a "for the non-technical reader" alternative.
 
-10. **Conventions feed verification.** The `## ...` section headings
+11. **Conventions feed verification.** The `## ...` section headings
     used in this document are the literal-substring greppable
     anchors that the plan-file verification checks rely on. If
     section headings are renamed, the verification checks must be
