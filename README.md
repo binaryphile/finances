@@ -39,15 +39,17 @@ Activate the pre-commit hook in any new clone:
 Treat household financial life as a system under design. Use Cockburn use
 cases to identify actors, stakeholders, goals, and the scenarios that satisfy
 each goal. The portfolio of use cases is the source of truth for *what* the
-household needs from its financial practice; supporting docs (`design.md`,
-scripts in `bin/`) describe *how* the practice is mechanized.
+household needs from its financial practice; `docs/design.md` describes
+*how* the practice is mechanized (v1: spreadsheet + CLI tools).
 
 See `docs/use-cases.md` for the use-case portfolio and the current
-state of the work (Status section).
+state of the work (Status section), and `docs/design.md` for the
+mechanism layer.
 
 ## Layout
 
     docs/use-cases.md     # Cockburn use-case portfolio (the canonical WHAT; entry point)
+    docs/design.md        # mechanism / HOW layer pairing with use-cases.md
     bin/                  # nix-wrapper symlinks (gitignored, populated by update-env)
     .githooks/pre-commit  # privacy firewall scanner
     flake.nix             # devShell

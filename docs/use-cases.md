@@ -2,7 +2,7 @@
 
 Cockburn use cases for a household financial life. The portfolio answers
 *what* the household needs from its financial practice; mechanism is
-deferred to a future `design.md`.
+described in [`design.md`](design.md).
 
 ## Purpose
 
@@ -12,9 +12,9 @@ similar may be on autopilot, but nobody has visibility into the overall
 state. This reframes the problem from "fix specific finance issues" to
 **install an observability practice for household financial life**.
 
-The portfolio below is the canonical *what*. Supporting docs (`design.md`,
-scripts in `bin/`) will describe *how* the practice is mechanized once
-enough use cases exist to inform the mechanism choice.
+The portfolio below is the canonical *what*. [`design.md`](design.md)
+describes *how* (v1: spreadsheet + CLI tools with a named upgrade
+trajectory). Scripts in `bin/` may follow as friction surfaces.
 
 ## Status
 
@@ -562,11 +562,12 @@ fraud investigation, institution dispute):*
 
 1. **Practice as SUD, mechanism-agnostic.** The decision to treat the
    practice itself as the SUD (not "a financial-tracking app") keeps
-   the UCs portable across mechanism choices. A future `design.md`
-   will pick a mechanism and describe how it implements the practice;
-   the UCs themselves should not need to change when the mechanism
-   does. This is the resistance-to-refactoring posture from
-   Khorikov, adapted to documentation.
+   the UCs portable across mechanism choices. [`design.md`](design.md)
+   picks the current mechanism (v1: CSV + CLI tools) and describes
+   how it implements the practice; the UCs themselves should not need
+   to change when the mechanism does. This is the
+   resistance-to-refactoring posture from Khorikov, adapted to
+   documentation.
 
 2. **Primary + Spouse joint-actor convention (UC-B).** Cockburn
    normally has one primary actor. The joint review is a real
@@ -631,10 +632,12 @@ fraud investigation, institution dispute):*
    rank, etc.) is deferred until the portfolio grows past ~10
    dressed UCs.
 
-9. **`design.md` is deferred.** No mechanism has been chosen, so
-   there is nothing for `design.md` to describe. The decision is
-   conditional on enough UCs existing to inform the mechanism
-   choice — not deferred to a specific future cycle.
+9. **`design.md` exists at [`docs/design.md`](design.md).** v1
+   mechanism: spreadsheet (CSV format) + CLI tools. Upgrade
+   trajectory named (CSV → SQLite → Postgres or self-hostable
+   SQLite-online for multi-tenant). The v2 migration cycle is tracked
+   under task `#16498` and fires on re-evaluation triggers, not on
+   a schedule.
 
 10. **Spouse-as-repo-editor question is open.** Whether Spouse
     co-edits this repo or only consumes summaries is an open
