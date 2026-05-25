@@ -86,6 +86,30 @@ cycle reaches its own implementation gate; do not pivot mid-practice.
   plain text, vendor-neutral, openable by any spreadsheet program
   or text editor, trivially parseable by any CLI.
 
+## Encryption at rest
+
+v1 inherits at-rest protection from the platform's user-partition
+encryption (ChromeOS FDE in the operator's current environment; LUKS,
+FileVault, or BitLocker in equivalent setups). Files in
+`<finances-dir>/` are plaintext on the running container's filesystem
+but ciphertext on the underlying disk when the user is logged out.
+
+This is sufficient against:
+
+- Lost or stolen device (powered off) — disk sealed without the user's
+  login credential
+- Another user on the same device with a separate account —
+  user-partition isolation
+- Backup target — only when the target itself is encrypted (see
+  Workflow / Backup-export)
+
+This is **not** sufficient against compromise of the running session
+(an attacker with shell access while the user is logged in). For
+household finances data the running-session threat is narrow; layered
+encryption (gocryptfs overlay, per-file age) is deferred — see
+Design decisions §10 for the rationale and the re-evaluation trigger
+that would re-open the question.
+
 ## Inventory schema (CSV)
 
 Concrete column spec, mirroring UC-A's *Technology and Data
@@ -210,6 +234,14 @@ Operationalizes the data-ownership principle.
 | Manual backup | `cp -a <finances-dir>/ <backup-dir>/finances-YYYYMMDD/` |
 | Automated backup | cron / systemd timer copies `<finances-dir>/` to a separate disk on a chosen cadence (e.g., weekly) |
 | Annual dump+restore drill | copy `<finances-dir>/` to a sandbox location; verify CSV parses cleanly with `csvstat` / `csvlook`; re-import into a fresh spreadsheet (LibreOffice / Excel / Google Sheets) to verify portability; spot-check equivalence per the Design principles definition |
+
+**Backup target must be encrypted at rest.** Plaintext visibility of
+`<finances-dir>/` ends at the platform's user-partition boundary
+(see Encryption at rest). Backup destinations must provide their own
+at-rest encryption — LUKS on an external USB; vendor-encrypted cloud
+storage with operator-held key; or wrap the backup in `age` / `gpg`
+before transfer. A backup that lands plaintext on a non-FDE target
+defeats the at-rest protection model.
 
 ### Tooling discipline
 
@@ -355,3 +387,21 @@ Key choices with rationale:
    friction (e.g., needing joins across files), that is itself a
    re-evaluation trigger toward v2 (SQLite naturally handles
    multi-table joins).
+
+10. **Layered encryption deferred to v2 or later** — v1 trusts the
+    platform's user-partition encryption (FDE) for at-rest
+    protection (see Encryption at rest). Layered tooling
+    (gocryptfs overlay, per-file age encryption) would add defense
+    against running-session compromise but at material workflow cost:
+    mount/unmount around sessions; friction for CSV tooling that
+    expects a stable file path; nvim swap files would land in the
+    cleartext mount. For household finances data the
+    running-session threat is narrow; platform FDE is the workhorse.
+    If the threat model expands — multi-tenant device sharing,
+    shoulder-surfing concerns, regulatory compliance, or
+    "Privacy concerns about local files" accumulates as a
+    subjective re-evaluation trigger — the v2 design cycle or a
+    standalone re-evaluation cycle picks up layered encryption.
+    Pre-emptive consideration in this cycle (operator-raised before
+    practice began) is recorded here so the next cycle knows the
+    v1 reasoning.
